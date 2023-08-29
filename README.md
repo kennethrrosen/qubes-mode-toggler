@@ -14,8 +14,8 @@ This script toggles system settings between 'office' and 'travel' modes on Qubes
 
 ## Usage
 
-1. To set **office mode**: ```./toggle_mode.sh office```
-2. To set **travel mode**: ```./toggle_mode.sh travel```
+1. To set **office mode**: ```toggle_mode office```
+2. To set **travel mode**: ```toggle_mode travel```
 
 ## Caution
 
