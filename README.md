@@ -28,5 +28,5 @@ This script toggles system settings between 'office' and 'travel' modes on Qubes
 ```
 git clone https://github.com/kennethrrosen/qubes-mode-toggler/
 cd [repo directory]
-chmod +x toggle_mode.sh
+chmod +x toggle_mode
 ```
