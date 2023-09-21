@@ -1,8 +1,7 @@
-  GNU nano 4.9.3                                                                                toggle_mode                                                                                           
 #!/bin/bash
-
 # Author: Kenneth R. Rosen
-# Date: Aug. 29, 2023
+# Created: Aug. 29, 2023
+# Updated: Sept. 21, 2023
 #
 # Description: This script toggles system settings between 'office' and 'travel' modes.
 # - For office mode, it sets specific battery charging thresholds, allows USB attachments
@@ -25,7 +24,7 @@ toggle_office() {
         for PARAM in $OFFICEPARAMSEND; do
             echo "${OFFICEEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
-	for PARAM in $OFFICEPARAMSSTART; do
+        for PARAM in $OFFICEPARAMSSTART; do
             echo "${OFFICESTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
     done
@@ -33,14 +32,14 @@ toggle_office() {
     # Set RPC policies for office use
     echo "sys-usb dom0 allow" | sudo tee /etc/qubes-rpc/policy/qubes.InputKeyboard
     echo "sys-usb dom0 allow" | sudo tee /etc/qubes-rpc/policy/qubes.InputMouse
+    sudo sed -i 's/^#sys-usb dom0 allow/sys-usb dom0 allow/' /etc/qubes-rpc/>
 
-    # Modify GRUB_CMDLINE_LINUX in /etc/default/grub
-    #sudo sed -i 's/rd.qubes.hide_all_usb//' /etc/default/grub
-    # Assuming no other occurrences of 'usb>' in the file, otherwise, adjust the sed command accordingly
-    #sudo sed -i 's/usb>/usb>/' /etc/default/grub
+    # Set sys-usb prefs
+    qvm-prefs sys-usb autostart 1
 
-    # Update grub (this might differ based on your setup)
-    #sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    # Modify GRUB_CMDLINE_LINUX in /etc/default/grub and update
+    sudo sed -i 's/\(GRUB_CMDLINE_LINUX=".*\) rd.qubes.hide_all_usb"/\1"/' /etc/default/grub
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
 }
 
@@ -54,7 +53,7 @@ toggle_travel() {
         for PARAM in $TRAVELPARAMSEND; do
             echo "${OFFICEEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
-	for PARAM in $TRAVELPARAMSSTART; do
+        for PARAM in $TRAVELPARAMSSTART; do
             echo "${OFFICESTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
     done
@@ -62,12 +61,14 @@ toggle_travel() {
     # Set RPC policies for travel use
     echo "sys-usb dom0 deny" | sudo tee /etc/qubes-rpc/policy/qubes.InputKeyboard
     echo "sys-usb dom0 deny" | sudo tee /etc/qubes-rpc/policy/qubes.InputMouse
+    sudo sed -i 's/^sys-usb dom0 allow/#&/' /etc/qubes-rpc/>
 
-    # Modify GRUB_CMDLINE_LINUX in /etc/default/grub
-    #sudo sed -i 's/usb>/usb rd.qubes.hide_all_usb>/' /etc/default/grub
+    # Set sys-usb prefs
+    qvm-prefs sys-usb autostart 0
 
-    # Update grub (this might differ based on whether you use legacy boot or EFI)
-    #sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    # Modify GRUB_CMDLINE_LINUX in /etc/default/grub abd update
+    sudo sed -i 's/\(GRUB_CMDLINE_LINUX=".*\) rd.qubes.hide_all_usb"/\1"/
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
 }
 
