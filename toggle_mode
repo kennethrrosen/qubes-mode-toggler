@@ -12,6 +12,11 @@
 # 1. Make the script executable: chmod +x toggle_mode
 # 2. To set office mode: toggle_mode office
 # 3. To set travel mode: toggle_mode travel
+#
+# TODO:
+# Clean up messaging
+# Prompts
+# Improve error handling, specifically for grub make and Yubikey RPC
 
 toggle_office() {
     # Set charging thresholds for office use
@@ -24,7 +29,7 @@ toggle_office() {
         for PARAM in $OFFICEPARAMSEND; do
             echo "${OFFICEEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
-        for PARAM in $OFFICEPARAMSSTART; do
+	for PARAM in $OFFICEPARAMSSTART; do
             echo "${OFFICESTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
     done
@@ -32,7 +37,7 @@ toggle_office() {
     # Set RPC policies for office use
     echo "sys-usb dom0 allow" | sudo tee /etc/qubes-rpc/policy/qubes.InputKeyboard
     echo "sys-usb dom0 allow" | sudo tee /etc/qubes-rpc/policy/qubes.InputMouse
-    sudo sed -i 's/^#sys-usb dom0 allow/sys-usb dom0 allow/' /etc/qubes-rpc/>
+    sudo sed -i 's/^#sys-usb dom0 allow/sys-usb dom0 allow/' /etc/qubes-rpc/policy/custom.LockScreen
 
     # Set sys-usb prefs
     qvm-prefs sys-usb autostart 1
@@ -53,7 +58,7 @@ toggle_travel() {
         for PARAM in $TRAVELPARAMSEND; do
             echo "${OFFICEEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
-        for PARAM in $TRAVELPARAMSSTART; do
+	for PARAM in $TRAVELPARAMSSTART; do
             echo "${OFFICESTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
     done
@@ -61,13 +66,13 @@ toggle_travel() {
     # Set RPC policies for travel use
     echo "sys-usb dom0 deny" | sudo tee /etc/qubes-rpc/policy/qubes.InputKeyboard
     echo "sys-usb dom0 deny" | sudo tee /etc/qubes-rpc/policy/qubes.InputMouse
-    sudo sed -i 's/^sys-usb dom0 allow/#&/' /etc/qubes-rpc/>
+    sudo sed -i 's/^sys-usb dom0 allow/#&/' /etc/qubes-rpc/policy/custom.LockScreen
 
     # Set sys-usb prefs
     qvm-prefs sys-usb autostart 0
 
     # Modify GRUB_CMDLINE_LINUX in /etc/default/grub abd update
-    sudo sed -i 's/\(GRUB_CMDLINE_LINUX=".*\) rd.qubes.hide_all_usb"/\1"/
+    sudo sed -i 's/\(GRUB_CMDLINE_LINUX=".*\) rd.qubes.hide_all_usb"/\1"/' /etc/default/grub
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
 }
