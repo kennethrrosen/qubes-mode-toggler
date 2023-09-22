@@ -56,10 +56,10 @@ toggle_travel() {
 
     for BAT in BAT0 BAT1; do
         for PARAM in $TRAVELPARAMSEND; do
-            echo "${OFFICEEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
+            echo "${TRAVELEND}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
 	for PARAM in $TRAVELPARAMSSTART; do
-            echo "${OFFICESTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
+            echo "${TRAVELSTART}" | sudo tee /sys/class/power_supply/$BAT/$PARAM
         done
     done
 
